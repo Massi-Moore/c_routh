@@ -1,0 +1,37 @@
+import numpy as np
+import control as ct
+import pandas as pd
+import matplotlib.pyplot as plt
+
+#* ----- INGRESO DE DATOS -----
+
+entry= input('Ingresar los numerales: ') #? Entrada de numerales del Sistema de Transferencia
+list = pd.DataFrame([entry.split(',')]) #? Separa las entradas por comas (,) y crea una tabla
+num = list.astype(float) #? Cambia los datos de tipo String a Float
+sys_num = num.values.tolist()[0] #? Saca la columna con los datos de la tabla y la vuelve una lista de Python
+
+
+#* ----- SISTEMA DE TRANSFERENCIA -----
+
+s = ct.tf(sys_num,[1]) #? [1] Es el denominador
+print(s)
+
+#* ----- CRITERIO DE ROUTH -----
+
+print("Es inestable" if any(i < 0 for i in sys_num) else "")
+
+# Obtén los coeficientes del polinomio característico
+coeffs = np.poly(sys_num)
+print(coeffs)
+
+# Calcula los polos del sistema
+poles = np.roots(coeffs)
+print(poles)
+
+# Verifica la estabilidad del sistema
+if all(p.real < 0 for p in poles):
+    print("El sistema es estable según el criterio de Routh-Hurwitz.")
+elif all(p.real > 0 for p in poles):
+    print("El sistema es inestable según el criterio de Routh-Hurwitz.")
+else:
+    print("El sistema es marginalmente estable según el criterio de Routh-Hurwitz.")
